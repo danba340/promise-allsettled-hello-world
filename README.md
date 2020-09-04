@@ -5,7 +5,8 @@ A hello world example for Promise.all, Promise.allSettled, Promise.any, Primose.
 ![Screenshot](screenshot.PNG)
 
 ## Getting started
-
+```
 npm install
 node server.js
 Browse to localhost:8080
+```
