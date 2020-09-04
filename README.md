@@ -1,4 +1,4 @@
-# promises-hello-world
+# A repo to explore handling multiple promises
 
 A hello world example for Promise.all, Promise.allSettled, Promise.any, Primose.race
 
