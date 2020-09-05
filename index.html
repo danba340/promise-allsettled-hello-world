@@ -41,13 +41,31 @@
         border-radius: 12px;
         box-shadow: 0 0 30px #0000008a;
       }
+      .loader {
+        border: 1px solid #f3f3f3;
+        border-top: 1px solid hotpink;
+        border-radius: 50%;
+        width: 10px;
+        height: 10px;
+        animation: spin 2s linear infinite;
+        margin: 0 auto 4px;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
     </style>
   </head>
   <body>
     <div class="content">
       <h2>Promise.all</h2>
       <div id="result-all" class="result"></div>
-      <h2>Promise.allsettled</h2>
+      <h2>Promise.allSettled</h2>
       <div id="result-all-settled" class="result"></div>
       <h2>Promise.any</h2>
       <div id="result-any" class="result"></div>
@@ -55,6 +73,7 @@
       <div id="result-race" class="result"></div>
     </div>
     <script>
+      const loaderMarkup = `<div class="loader"></div>`;
       // Polyfill for Promise.any
       const promiseAny = async (iterable) => {
         return Promise.all(
@@ -72,6 +91,12 @@
       const resultAllSettled = document.getElementById("result-all-settled");
       const resultAny = document.getElementById("result-any");
       const resultRace = document.getElementById("result-race");
+      const resultContainers = [
+        resultAll,
+        resultAllSettled,
+        resultAny,
+        resultRace,
+      ];
 
       const promises = [
         axios.get("/missingroute"),
@@ -81,13 +106,18 @@
         axios.get("/l"),
         axios.get("/o"),
       ];
+      for (const container of resultContainers) {
+        for (const promise of promises) {
+          container.innerHTML += loaderMarkup;
+        }
+      }
 
       // Promise.all - Wait for all promises to be resolved, or for any to be rejected.
       Promise.all(promises)
         .then((results) => {
           resultAll.innerHTML = results
             .map((result) => {
-              return `${result.data.payload}:✔️`;
+              return `<div>${result.data.payload}:✅</div>`;
             })
             .join(" ");
         })
@@ -99,7 +129,7 @@
         resultAllSettled.innerHTML = results
           .map((result) => {
             return result.status === "fulfilled"
-              ? `<div>${result.value.data.payload}: ✔️</div>`
+              ? `<div>${result.value.data.payload}: ✅</div>`
               : `<div>${result.reason.config.url}: ❌</div>`;
           })
           .join("");
@@ -107,7 +137,7 @@
       // Promise.any - Takes an iterable of Promise objects and, as soon as one of the promises in the iterable
       promiseAny(promises)
         .then((result) => {
-          resultAny.innerHTML = `${result.data.payload}: ✔️`;
+          resultAny.innerHTML = `${result.data.payload}: ✅`;
         })
         .catch((res) => {
           resultAny.innerHTML = "All promises rejected ❌";
@@ -115,7 +145,7 @@
       // Promise.race - Wait until any of the promises is resolved or rejected.
       Promise.race(promises)
         .then((result) => {
-          resultRace.innerHTML = `${result.data.payload}: ✔️`;
+          resultRace.innerHTML = `${result.data.payload}: ✅`;
         })
         .catch((err) => {
           resultRace.innerHTML = `${err.config.url} ❌`;

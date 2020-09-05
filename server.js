@@ -7,19 +7,29 @@ app.get("/", function (req, res) {
 });
 
 app.get("/h", function (req, res) {
-  res.send({ payload: "H" });
+  setTimeout(() => {
+    res.send({ payload: "H" });
+  }, 2000);
 });
 app.get("/e", function (req, res) {
-  res.send({ payload: "e" });
+  setTimeout(() => {
+    res.send({ payload: "e" });
+  }, 2000);
 });
 app.get("/l", function (req, res) {
-  res.send({ payload: "l" });
+  setTimeout(() => {
+    res.send({ payload: "l" });
+  }, 2000);
 });
 app.get("/l", function (req, res) {
-  res.send({ payload: "l" });
+  setTimeout(() => {
+    res.send({ payload: "l" });
+  }, 2000);
 });
 app.get("/o", function (req, res) {
-  res.send({ payload: "o" });
+  setTimeout(() => {
+    res.send({ payload: "o" });
+  }, 2000);
 });
 app.listen(8080, () => {
   console.log("Server listening on localhost:8080");
