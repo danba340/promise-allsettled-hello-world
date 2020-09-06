@@ -1,155 +1,157 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Promise allsettled test</title>
-    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Arvo&display=swap"
-      rel="stylesheet"
-    />
-    <style>
-      body {
-        font-family: "Arvo", serif;
-        min-height: 100vh;
-        text-align: center;
-        display: flex;
-        justify-content: center;
-        align-items: center;
 
-        background: #12c2e9; /* fallback for old browsers */
-        background: -webkit-linear-gradient(
-          to right,
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Promise allsettled test</title>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Arvo&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      font-family: "Arvo", serif;
+      min-height: 100vh;
+      text-align: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      background: #12c2e9;
+      /* fallback for old browsers */
+      background: -webkit-linear-gradient(to right,
           #f64f59,
           #c471ed,
-          #12c2e9
-        ); /* Chrome 10-25, Safari 5.1-6 */
-        background: linear-gradient(
-          to right,
+          #12c2e9);
+      /* Chrome 10-25, Safari 5.1-6 */
+      background: linear-gradient(to right,
           #f64f59,
           #c471ed,
-          #12c2e9
-        ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-      }
-      .content {
-        padding: 12px 0 36px;
-        color: white;
-        background: #2d2433;
-        width: 50%;
-        height: 75%;
-        border-radius: 12px;
-        box-shadow: 0 0 30px #0000008a;
-      }
-      .loader {
-        border: 1px solid #f3f3f3;
-        border-top: 1px solid hotpink;
-        border-radius: 50%;
-        width: 10px;
-        height: 10px;
-        animation: spin 2s linear infinite;
-        margin: 0 auto 4px;
+          #12c2e9);
+      /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    }
+
+    .content {
+      padding: 12px 0 36px;
+      color: white;
+      background: #2d2433;
+      width: 50%;
+      height: 75%;
+      border-radius: 12px;
+      box-shadow: 0 0 30px #0000008a;
+    }
+
+    .loader {
+      border: 1px solid #f3f3f3;
+      border-top: 1px solid hotpink;
+      border-radius: 50%;
+      width: 10px;
+      height: 10px;
+      animation: spin 2s linear infinite;
+      margin: 0 auto 4px;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
       }
 
-      @keyframes spin {
-        0% {
-          transform: rotate(0deg);
-        }
-        100% {
-          transform: rotate(360deg);
-        }
+      100% {
+        transform: rotate(360deg);
       }
-    </style>
-  </head>
-  <body>
-    <div class="content">
-      <h2>Promise.all</h2>
-      <div id="result-all" class="result"></div>
-      <h2>Promise.allSettled</h2>
-      <div id="result-all-settled" class="result"></div>
-      <h2>Promise.any</h2>
-      <div id="result-any" class="result"></div>
-      <h2>Promise.race</h2>
-      <div id="result-race" class="result"></div>
-    </div>
-    <script>
-      const loaderMarkup = `<div class="loader"></div>`;
-      // Polyfill for Promise.any
-      const promiseAny = async (iterable) => {
-        return Promise.all(
-          [...iterable].map((promise) => {
-            return new Promise((resolve, reject) =>
-              Promise.resolve(promise).then(reject, resolve)
-            );
-          })
-        ).then(
-          (errors) => Promise.reject(errors),
-          (value) => Promise.resolve(value)
-        );
-      };
-      const resultAll = document.getElementById("result-all");
-      const resultAllSettled = document.getElementById("result-all-settled");
-      const resultAny = document.getElementById("result-any");
-      const resultRace = document.getElementById("result-race");
-      const resultContainers = [
-        resultAll,
-        resultAllSettled,
-        resultAny,
-        resultRace,
-      ];
+    }
+  </style>
+</head>
 
-      const promises = [
-        axios.get("/missingroute"),
-        axios.get("/h"),
-        axios.get("/e"),
-        axios.get("/l"),
-        axios.get("/l"),
-        axios.get("/o"),
-      ];
-      for (const container of resultContainers) {
-        for (const promise of promises) {
-          container.innerHTML += loaderMarkup;
-        }
-      }
-
-      // Promise.all - Wait for all promises to be resolved, or for any to be rejected.
-      Promise.all(promises)
-        .then((results) => {
-          resultAll.innerHTML = results
-            .map((result) => {
-              return `<div>${result.data.payload}:✅</div>`;
-            })
-            .join(" ");
+<body>
+  <div class="content">
+    <h2>Promise.all</h2>
+    <div id="result-all" class="result"></div>
+    <h2>Promise.allSettled</h2>
+    <div id="result-all-settled" class="result"></div>
+    <h2>Promise.any</h2>
+    <div id="result-any" class="result"></div>
+    <h2>Promise.race</h2>
+    <div id="result-race" class="result"></div>
+  </div>
+  <script>
+    const loaderMarkup = `<div class="loader"></div>`;
+    // Polyfill for Promise.any
+    const promiseAny = async (iterable) => {
+      return Promise.all(
+        [...iterable].map((promise) => {
+          return new Promise((resolve, reject) =>
+            Promise.resolve(promise).then(reject, resolve)
+          );
         })
-        .catch((err) => {
-          resultAll.innerHTML = `${err.config.url} was rejected ❌`;
-        });
-      // Promise.allSettled - Wait until all promises have settled (each may resolve or reject).
-      Promise.allSettled(promises).then((results) => {
-        resultAllSettled.innerHTML = results
+      ).then(
+        (errors) => Promise.reject(errors),
+        (value) => Promise.resolve(value)
+      );
+    };
+    const resultAll = document.getElementById("result-all");
+    const resultAllSettled = document.getElementById("result-all-settled");
+    const resultAny = document.getElementById("result-any");
+    const resultRace = document.getElementById("result-race");
+    const resultContainers = [
+      resultAll,
+      resultAllSettled,
+      resultAny,
+      resultRace,
+    ];
+
+    const promises = [
+      axios.get("/missingroute"),
+      axios.get("/h"),
+      axios.get("/e"),
+      axios.get("/l"),
+      axios.get("/l"),
+      axios.get("/o"),
+    ];
+    for (const container of resultContainers) {
+      for (const promise of promises) {
+        container.innerHTML += loaderMarkup;
+      }
+    }
+
+    // Promise.all - Wait for all promises to be resolved, or for any to be rejected.
+    Promise.all(promises)
+      .then((results) => {
+        resultAll.innerHTML = results
           .map((result) => {
-            return result.status === "fulfilled"
-              ? `<div>${result.value.data.payload}: ✅</div>`
-              : `<div>${result.reason.config.url}: ❌</div>`;
+            return `<div>${result.data.payload}:✅</div>`;
           })
-          .join("");
+          .join(" ");
+      })
+      .catch((err) => {
+        resultAll.innerHTML = `${err.config.url} was rejected ❌`;
       });
-      // Promise.any - Takes an iterable of Promise objects and, as soon as one of the promises in the iterable
-      promiseAny(promises)
-        .then((result) => {
-          resultAny.innerHTML = `${result.data.payload}: ✅`;
+    // Promise.allSettled - Wait until all promises have settled (each may resolve or reject).
+    Promise.allSettled(promises).then((results) => {
+      resultAllSettled.innerHTML = results
+        .map((result) => {
+          return result.status === "fulfilled"
+            ? `<div>${result.value.data.payload}: ✅</div>`
+            : `<div>${result.reason.config.url}: ❌</div>`;
         })
-        .catch((res) => {
-          resultAny.innerHTML = "All promises rejected ❌";
-        });
-      // Promise.race - Wait until any of the promises is resolved or rejected.
-      Promise.race(promises)
-        .then((result) => {
-          resultRace.innerHTML = `${result.data.payload}: ✅`;
-        })
-        .catch((err) => {
-          resultRace.innerHTML = `${err.config.url} ❌`;
-        });
-    </script>
-  </body>
+        .join("");
+    });
+    // Promise.any - Takes an iterable of Promise objects and, as soon as one of the promises in the iterable
+    promiseAny(promises)
+      .then((result) => {
+        resultAny.innerHTML = `${result.data.payload}: ✅`;
+      })
+      .catch((res) => {
+        resultAny.innerHTML = "All promises rejected ❌";
+      });
+    // Promise.race - Wait until any of the promises is resolved or rejected.
+    Promise.race(promises)
+      .then((result) => {
+        resultRace.innerHTML = `${result.data.payload}: ✅`;
+      })
+      .catch((err) => {
+        resultRace.innerHTML = `${err.config.url} ❌`;
+      });
+  </script>
+</body>
+
 </html>
