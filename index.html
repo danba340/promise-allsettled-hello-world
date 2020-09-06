@@ -94,18 +94,18 @@
     const resultRace = document.getElementById("result-race");
     const resultContainers = [
       resultAll,
-      resultAllSettled,
-      resultAny,
-      resultRace,
+      // resultAllSettled,
+      // resultAny,
+      // resultRace,
     ];
 
     const promises = [
-      axios.get("/missingroute"),
       axios.get("/h"),
       axios.get("/e"),
       axios.get("/l"),
       axios.get("/l"),
       axios.get("/o"),
+      axios.get("/missingroute"),
     ];
     for (const container of resultContainers) {
       for (const promise of promises) {
@@ -113,7 +113,7 @@
       }
     }
 
-    // Promise.all - Wait for all promises to be resolved, or for any to be rejected.
+    // Promise.all - Wait for all promises to be fullfilled, catch on any reject.
     Promise.all(promises)
       .then((results) => {
         resultAll.innerHTML = results
@@ -125,32 +125,32 @@
       .catch((err) => {
         resultAll.innerHTML = `${err.config.url} was rejected ❌`;
       });
-    // Promise.allSettled - Wait until all promises have settled (each may resolve or reject).
-    Promise.allSettled(promises).then((results) => {
-      resultAllSettled.innerHTML = results
-        .map((result) => {
-          return result.status === "fulfilled"
-            ? `<div>${result.value.data.payload}: ✅</div>`
-            : `<div>${result.reason.config.url}: ❌</div>`;
-        })
-        .join("");
-    });
-    // Promise.any - Takes an iterable of Promise objects and, as soon as one of the promises in the iterable
-    promiseAny(promises)
-      .then((result) => {
-        resultAny.innerHTML = `${result.data.payload}: ✅`;
-      })
-      .catch((res) => {
-        resultAny.innerHTML = "All promises rejected ❌";
-      });
-    // Promise.race - Wait until any of the promises is resolved or rejected.
-    Promise.race(promises)
-      .then((result) => {
-        resultRace.innerHTML = `${result.data.payload}: ✅`;
-      })
-      .catch((err) => {
-        resultRace.innerHTML = `${err.config.url} ❌`;
-      });
+    // Promise.allSettled - Wait until all promises have resolved (may fulfill or reject).
+    // Promise.allSettled(promises).then((results) => {
+    //   resultAllSettled.innerHTML = results
+    //     .map((result) => {
+    //       return result.status === "fulfilled"
+    //         ? `<div>${result.value.data.payload}: ✅</div>`
+    //         : `<div>${result.reason.config.url}: ❌</div>`;
+    //     })
+    //     .join("");
+    // });
+    // // Promise.any - As soon as one of the promises fulfill
+    // promiseAny(promises)
+    //   .then((result) => {
+    //     resultAny.innerHTML = `${result.data.payload}: ✅`;
+    //   })
+    //   .catch((res) => {
+    //     resultAny.innerHTML = "All promises rejected ❌";
+    //   });
+    // Promise.race - Wait until any of the promises is fulfilled or rejected.
+    // Promise.race(promises)
+    //   .then((result) => {
+    //     resultRace.innerHTML = `${result.data.payload}: ✅`;
+    //   })
+    //   .catch((err) => {
+    //     resultRace.innerHTML = `${err.config.url} ❌`;
+    //   });
   </script>
 </body>
 
